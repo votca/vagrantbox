@@ -1,0 +1,93 @@
+---
+
+- name: Install expat
+  yum:
+    name: expat
+    state: latest
+
+- name: Install expat development
+  yum:
+    name: expat-devel
+    state: latest
+
+- name: Install gsl
+  yum:
+    name: gsl
+    state: latest
+
+- name: Install gsl development
+  yum:
+    name: gsl-devel
+    state: latest
+
+- name: Install sqlite3
+  yum:
+    name: sqlite
+    state: latest
+
+- name: Install sqlite-devel
+  yum:
+    name: sqlite-devel
+    state: latest
+
+- name: install Doxygen
+  yum:
+    name: doxygen
+    state: latest
+
+- name: install TXT2TAGS
+  yum:
+    name: txt2tags
+    state: latest
+
+- name: Clean old votca folders and files if present
+  file:
+    state: absent
+    path: /home/vagrant/Desktop/VOTCA
+
+- git:
+    repo: 'https://github.com/votca/votca.git'
+    dest: /home/vagrant/Desktop/VOTCA
+    recursive: yes
+  become: yes
+  become_user: vagrant
+
+- file:
+    path: /home/vagrant/Desktop/VOTCA/build
+    state: directory
+    mode: 0755
+  become: yes
+  become_user: vagrant
+
+- name: build command cmake
+  shell: source /usr/local/gromacs/bin/GMXRC.bash; cmake3 -DBUILD_CSGAPPS=ON -DBUILD_CTP=ON -DBUILD_XTP=ON -DCMAKE_INSTALL_PREFIX=/usr/local/bin ../
+  args:
+    executable: /bin/bash
+    chdir: /home/vagrant/Desktop/VOTCA/build
+ become: yes
+  become_user: vagrant
+
+- name: build command make
+  command: make -j5
+  args:
+    chdir: /home/vagrant/Desktop/VOTCA/build
+  become: yes
+  become_user: vagrant
+
+- name: build make install
+  command: make install
+  args:
+    chdir: /home/vagrant/Desktop/VOTCA/build
+    
+- name: Copy .bashrc file with env variables for VOTCA installation 
+  copy:
+    src:   .bashrc
+    dest:  /home/vagrant/.bashrc
+    mode:  0644
+    owner: vagrant
+    group: vagrant
+
+- name: Source .bashrc
+  shell: source /home/vagrant/.bashrc
+  become: true
+  become-user: vagrant

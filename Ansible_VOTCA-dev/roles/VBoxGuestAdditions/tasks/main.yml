@@ -1,0 +1,22 @@
+---
+
+- copy:
+    src:  VBoxGuestAdditions 
+    dest: /home/vagrant/Downloads/
+    owner: vagrant
+    group: vagrant
+
+- file:
+    path: /home/vagrant/Downloads/VBoxGuestAdditions/VBoxLinuxAdditions.run
+    mode: 0777
+ 
+- file:
+    path: /home/vagrant/Downloads/VBoxGuestAdditions/autorun.sh
+    mode: 0777
+ 
+- file:
+    path: /home/vagrant/Downloads/VBoxGuestAdditions/runasroot.sh
+    mode: 0777
+ 
+- name: Install GuestAdditions
+  shell: /home/vagrant/Downloads/VBoxGuestAdditions/VBoxLinuxAdditions.run; exit 0 
